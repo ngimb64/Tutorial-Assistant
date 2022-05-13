@@ -10,7 +10,7 @@
 > Example:<br>
 > python3 setup.py "venv name"
 
-- Once virtual env is built traverse to the Scripts directory in the environment folder just created.
+- Once virtual env is built move to the Scripts directory in the environment folder just created.
 - In the Scripts directory, execute the "activate" script to activate the virtual environment.
 
 ## Purpose
@@ -27,5 +27,5 @@
 - Any keys pressed will be buffered into a variable and will be entered as a sentence when enter is pressed
 - Hit escape to pause program and cleanly format key logs to be written to a new file
 - If you want to start again hit enter again
-- OR if you would like to exit hit Ctrl + C (KeyboardInterrupt)
+- OR if you would like to exit hit Ctrl + C
  
