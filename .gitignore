@@ -1,2 +1,9 @@
 # Ignore Pycharm files #
 .idea/
+
+# Ignore venv files #
+venv/*
+
+#Ignore ResultDock contents #
+ResultDock/*
+!ResultDock/.keep
