@@ -1,5 +1,6 @@
 # Tutorial Assistant
 ![alt text](https://github.com/ngimb64/Tutorial-Assistant/blob/master/TutorialAssistant.gif?raw=true)
+![alt text](https://github.com/ngimb64/Tutorial-Assistant/blob/master/TutorialAssistant.png?raw=true)
 
 ## Prereqs
 > This script runs on Windows and Linux, written in Python 3.8
