@@ -42,3 +42,11 @@ Then that file is reformatted and saved in a new file with a clean, easily reada
 > screenshots &nbsp;-&nbsp; Loop that actively takes screenshots.<br>
 > regex_formatting &nbsp;-&nbsp; Parses the logged pynput keys into human-readable format.<br>
 > main &nbsp;-&nbsp; Facilitates key listener thread and screenshot capture.
+
+## Exit Codes
+-- tutorial_assistant.py --
+
+> 0 - Successful operation<br>
+> 1 - Unexpected exception occurred<br>
+> 2 - Error occurred during file operation saving output keys to file<br>
+> 3 - Error occurred during file operation reformatting output keys to human format
