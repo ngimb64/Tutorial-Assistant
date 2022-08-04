@@ -10,7 +10,7 @@
 This script runs on Windows and Linux, written in Python 3.8
 
 ## Purpose
-This project adopts the features of the Screenshot-Assistant project in my repository.<br>
+This project adopts the features of the Screenshot-Assistant project.<br>
 The big difference is that this program also logs keys in sentence structures and logs to a file.<br>
 Then that file is reformatted and saved in a new file with a clean, easily readable format.
 
