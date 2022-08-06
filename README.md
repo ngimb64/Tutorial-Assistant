@@ -36,16 +36,18 @@ Then that file is reformatted and saved in a new file with a clean, easily reada
  
 ## Function Layout
 -- tutorial_assistant.py --
+> on_press &nbsp;-&nbsp; For key listener, write sentence to file if enter is pressed, kill 
+> screenshot capturing process if escape is pressed, otherwise append the entered key to the key 
+> capture list to form sentence.
 
-> on_press &nbsp;-&nbsp; For key listener, write sentence to file if enter is pressed, kill screenshot capturing
-> process if escape is pressed, otherwise append the entered key to the key capture list to form sentence.<br>
-> screenshots &nbsp;-&nbsp; Loop that actively takes screenshots.<br>
-> regex_formatting &nbsp;-&nbsp; Parses the logged pynput keys into human-readable format.<br>
+> screenshots &nbsp;-&nbsp; Loop that actively takes screenshots.
+
+> regex_formatting &nbsp;-&nbsp; Parses the logged pynput keys into human-readable format.
+
 > main &nbsp;-&nbsp; Facilitates key listener thread and screenshot capture.
 
 ## Exit Codes
 -- tutorial_assistant.py --
-
 > 0 - Successful operation<br>
 > 1 - Unexpected exception occurred<br>
 > 2 - Error occurred during file operation saving output keys to file<br>

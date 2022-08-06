@@ -78,7 +78,7 @@ def screenshots(path: str):
         time.sleep(WAIT_TIME)
 
 
-def regex_formatting(path):
+def regex_formatting(path: str):
     """
     Parses the logged pynput keys into human-readable format.
 
