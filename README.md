@@ -7,21 +7,26 @@
 &#9745;&#65039; Pylint verified 9.07/10
 
 ## Prereqs
-This script runs on Windows and Linux, written in Python 3.8
+This script runs on Windows and Linux, written in Python 3.8 and updated to version 3.10.6
 
 ## Purpose
 This project adopts the features of the Screenshot-Assistant project.<br>
 The big difference is that this program also logs keys in sentence structures and logs to a file.<br>
-Then that file is reformatted and saved in a new file with a clean, easily readable format.
+Then that file is reformatted and saved in a new file with a clean, easily readable format.<br>
+This tool is handy for taking screenshot and logging commands at the same time.
 
 ## Installation
 - Run the setup.py script to build a virtual environment and install all external packages in the created venv.
 
-> Example: `python3 setup.py venv`
+> Examples:<br> 
+>       &emsp;&emsp;- Windows:  `python setup.py venv`<br>
+>       &emsp;&emsp;- Linux:  `python3 setup.py venv`
 
 - Once virtual env is built traverse to the (Scripts-Windows or bin-Linux) directory in the environment folder just created.
-- For Windows in the Scripts directory, for execute the `./activate` script to activate the virtual environment.
-- For Linux in the bin directory, run the command `source activate` to activate the virtual environment.
+- For Windows, in the venv\Scripts directory, execute `activate` or `activate.bat` script to activate the virtual environment.
+- For Linux, in the venv/bin directory, execute `source activate` to activate the virtual environment.
+- If for some reason issues are experienced with the setup script, the alternative is to manually create an environment, activate it, then run pip install -r packages.txt in project root.
+- To exit from the virtual environment when finished, execute `deactivate`.
 
 ## How to use
 - Open up shell such as command prompt or terminal
@@ -43,6 +48,8 @@ Then that file is reformatted and saved in a new file with a clean, easily reada
 > screenshots &nbsp;-&nbsp; Loop that actively takes screenshots.
 
 > regex_formatting &nbsp;-&nbsp; Parses the logged pynput keys into human-readable format.
+
+> print_err &nbsp;-&nbsp; Displays the passed in error message via stderr the durations on seconds passed in.
 
 > main &nbsp;-&nbsp; Facilitates key listener thread and screenshot capture.
 
