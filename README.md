@@ -7,7 +7,7 @@
 &#9745;&#65039; Pylint verified 9.07/10
 
 ## Prereqs
-This script runs on Windows and Linux, written in Python 3.8 and updated to version 3.10.6
+This script runs on Windows 10 and Debian-based Linux, written in Python 3.8 and updated to version 3.10.6
 
 ## Purpose
 This project adopts the features of the Screenshot-Assistant project.<br>
