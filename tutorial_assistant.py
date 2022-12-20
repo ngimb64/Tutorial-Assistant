@@ -95,7 +95,7 @@ def regex_formatting(path: Path):
                             :.<\d+>>''', re.X)
 
     regex3 = re.compile(r'[^\S\r\n]')
-    regex4 = re.compile(r'<Key\.backspace:<8>>')
+    regex4 = re.compile(r'<Key\.backspace:<\d+>>')
     regex5 = re.compile(r'<Key\.space:>')
     cmd_path = file_path / 'commands.txt'
 
