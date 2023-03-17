@@ -1,21 +1,21 @@
-# Tutorial Assistant
+<div align="center" style="font-family: monospace">
+<h1>Tutorial Assistant</h1>
+&#9745;&#65039; Bandit verified &nbsp;|&nbsp; &#9745;&#65039; Synk verified &nbsp;|&nbsp; &#9745;&#65039; Pylint verified 9.19/10
+</div>
+
 ![alt text](https://github.com/ngimb64/Tutorial-Assistant/blob/master/TutorialAssistant.gif?raw=true)
 ![alt text](https://github.com/ngimb64/Tutorial-Assistant/blob/master/TutorialAssistant.png?raw=true)
 
-&#9745;&#65039; Bandit verified<br>
-&#9745;&#65039; Synk verified<br>
-&#9745;&#65039; Pylint verified 9.07/10
-
-## Prereqs
-This script runs on Windows 10 and Debian-based Linux, written in Python 3.8 and updated to version 3.10.6
-
-## Purpose
+### Purpose
 This project adopts the features of the Screenshot-Assistant project.<br>
 The big difference is that this program also logs keys in sentence structures and logs to a file.<br>
 Then that file is reformatted and saved in a new file with a clean, easily readable format.<br>
 This tool is handy for taking screenshot and logging commands at the same time.
 
-## Installation
+### Prereqs
+This script runs on Windows 10 and Debian-based Linux, written in Python 3.8 and updated to version 3.10.6
+
+### Installation
 - Run the setup.py script to build a virtual environment and install all external packages in the created venv.
 
 > Examples:<br> 
@@ -28,7 +28,7 @@ This tool is handy for taking screenshot and logging commands at the same time.
 - If for some reason issues are experienced with the setup script, the alternative is to manually create an environment, activate it, then run pip install -r packages.txt in project root.
 - To exit from the virtual environment when finished, execute `deactivate`.
 
-## How to use
+### How to use
 - Open up shell such as command prompt or terminal
 - Enter directory containing program and execute in shell
 - Open the graphical file manager and go to path specified in program
@@ -39,7 +39,7 @@ This tool is handy for taking screenshot and logging commands at the same time.
 - If you want to start again hit enter again
 - OR if you would like to exit hit Ctrl + C
  
-## Function Layout
+### Function Layout
 -- tutorial_assistant.py --
 > on_press &nbsp;-&nbsp; For key listener, write sentence to file if enter is pressed, kill 
 > screenshot capturing process if escape is pressed, otherwise append the entered key to the key 
@@ -53,7 +53,7 @@ This tool is handy for taking screenshot and logging commands at the same time.
 
 > main &nbsp;-&nbsp; Facilitates key listener thread and screenshot capture.
 
-## Exit Codes
+### Exit Codes
 -- tutorial_assistant.py --
 > 0 - Successful operation<br>
 > 1 - Unexpected exception occurred<br>
