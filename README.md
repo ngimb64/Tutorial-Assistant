@@ -1,7 +1,7 @@
 <div align="center" style="font-family: monospace">
 <h1>Tutorial Assistant</h1>
 &#9745;&#65039; Bandit verified &nbsp;|&nbsp; &#9745;&#65039; Synk verified &nbsp;|&nbsp; &#9745;&#65039; Pylint verified 9.19/10
-</div>
+</div><br>
 
 ![alt text](https://github.com/ngimb64/Tutorial-Assistant/blob/master/TutorialAssistant.gif?raw=true)
 ![alt text](https://github.com/ngimb64/Tutorial-Assistant/blob/master/TutorialAssistant.png?raw=true)
