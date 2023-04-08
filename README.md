@@ -12,6 +12,12 @@ The big difference is that this program also logs keys in sentence structures an
 Then that file is reformatted and saved in a new file with a clean, easily readable format.<br>
 This tool is handy for taking screenshot and logging commands at the same time.
 
+### License
+The program is licensed under [GNU Public License v3.0](LICENSE.md)
+
+### Contributions or Issues
+[CONTRIBUTING](CONTRIBUTING.md)
+
 ### Prereqs
 This script runs on Windows 10 and Debian-based Linux, written in Python 3.8 and updated to version 3.10.6
 
